@@ -1,67 +1,169 @@
 ﻿@model BalanceByte.Models.RechargeModel
-
 @{
-    ViewData["Title"] = "Calculate Balance";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container mt-5">
+<div class="container mt-5 pt-4">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-sm-12">
-
-            <div class="glass-panel text-center mb-4">
-                <h2 style="color: var(--primary-blue); font-weight: 700;">BalanceByte</h2>
-                <p>Instantly calculate your actual SIM balance after taxes.</p>
+        <div class="col-lg-5 col-md-7 fade-in-up">
+            <div class="glass-card mb-4 text-center">
+                <h1 class="font-weight-bold text-gradient" style="font-size: 2.5rem;">BalanceByte</h1>
+                <p class="text-muted">Smart SIM balance calculation.</p>
             </div>
 
-            <div class="glass-panel">
-                <form asp-action="Index" method="post">
+            <div class="glass-card">
+                <form asp-action="Index" method="post" id="calcForm">
+
                     <div class="form-group mb-4">
-                        <label asp-for="Carrier" class="form-label font-weight-bold"></label>
-                        <select asp-for="Carrier" class="neu-input">
-                            <option value="">Select Carrier...</option>
+                        <label asp-for="MobileNumber" class="form-label font-weight-bold ml-1"></label>
+                        <input asp-for="MobileNumber" class="neu-input" id="mobileInput" placeholder="03XXXXXXXXX" autocomplete="off" />
+                        <span asp-validation-for="MobileNumber" class="text-danger mt-2 d-block" style="color: var(--accent-glow)!important; font-size: 0.85rem;"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Carrier" class="form-label font-weight-bold ml-1"></label>
+                        <select asp-for="Carrier" class="neu-input" id="carrierSelect">
+                            <option value="">Auto-detecting or Select manually...</option>
                             <option value="Jazz">Jazz</option>
                             <option value="Zong">Zong</option>
                             <option value="Telenor">Telenor</option>
                             <option value="Ufone">Ufone</option>
                         </select>
-                        <span asp-validation-for="Carrier" class="text-danger" style="color: var(--secondary-red) !important;"></span>
+                        <span asp-validation-for="Carrier" class="text-danger mt-2 d-block" style="color: var(--accent-glow)!important; font-size: 0.85rem;"></span>
                     </div>
 
-                    <div class="form-group mb-4">
-                        <label asp-for="RechargeAmount" class="form-label font-weight-bold"></label>
-                        <input asp-for="RechargeAmount" class="neu-input" placeholder="e.g., 100" />
-                        <span asp-validation-for="RechargeAmount" class="text-danger" style="color: var(--secondary-red) !important;"></span>
+                    <div class="form-group mb-5">
+                        <label asp-for="RechargeAmount" class="form-label font-weight-bold ml-1"></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: transparent; color: var(--text-muted); position: absolute; left: 15px; top: 16px; z-index: 10;">Rs.</span>
+                            <input asp-for="RechargeAmount" class="neu-input pl-5" style="padding-left: 45px;" placeholder="100" />
+                        </div>
+                        <span asp-validation-for="RechargeAmount" class="text-danger mt-2 d-block" style="color: var(--accent-glow)!important; font-size: 0.85rem;"></span>
                     </div>
 
-                    <div class="text-center mt-4">
-                        <button type="submit" class="neu-btn w-100">Calculate Balance</button>
-                    </div>
+                    <button type="submit" class="neu-btn w-100" id="submitBtn">
+                        <span id="btnText">Calculate Balance</span>
+                    </button>
                 </form>
             </div>
-
-            @if (Model.IsCalculated)
-            {
-                <div class="glass-panel mt-4 text-center fade-in-up">
-                    <h4 style="color: var(--primary-blue);">Actual Balance</h4>
-                    <h1 style="color: var(--accent-gold); font-weight: 800; font-size: 3rem;">
-                        Rs. @Model.ActualBalance.ToString("0.00")
-                    </h1>
-                    <p style="color: var(--secondary-red); font-size: 0.9rem;">
-                        *Based on standard 13.5% tax deduction for @Model.Carrier.
-                    </p>
-                </div>
-            }
-
         </div>
+
+        @if (Model.IsCalculated)
+        {
+            <div class="col-lg-5 col-md-7 mt-4 mt-lg-0 fade-in-up" style="animation-delay: 0.2s;">
+                <div class="glass-card text-center h-100 d-flex flex-column justify-content-center">
+
+                    <div id="skeletonUI">
+                        <div class="skeleton mb-3" style="width: 50%; margin: 0 auto; height: 30px;"></div>
+                        <div class="skeleton mb-4" style="width: 80%; margin: 0 auto; height: 60px;"></div>
+                        <div class="skeleton" style="width: 100%; height: 100px;"></div>
+                    </div>
+
+                    <div id="actualResult" style="display: none;">
+                        <h4 style="color: var(--text-muted); font-weight: 500;">Net Balance</h4>
+
+                        <div class="d-flex justify-content-center align-items-center mt-2 mb-2">
+                            <h1 class="text-gradient mb-0 mr-3" style="font-weight: 800; font-size: 4rem;" id="finalBalanceText">
+                                @Model.ActualBalance.ToString("0.00")
+                            </h1>
+                            <button class="btn btn-sm" id="copyBtn" title="Copy to clipboard" style="background: var(--bg-base); color: var(--text-main); border-radius: 12px; padding: 10px; box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);">
+                                📋
+                            </button>
+                        </div>
+
+                        <div class="tax-breakdown text-left">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Recharge Amount:</span>
+                                <strong>Rs. @Model.RechargeAmount.ToString("0.00")</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2" style="color: var(--accent-glow);">
+                                <span>FED Tax (13.5%):</span>
+                                <strong>- Rs. @Model.TaxDeducted.ToString("0.00")</strong>
+                            </div>
+                            <hr style="border-color: var(--border-glass);" />
+                            <div class="d-flex justify-content-between">
+                                <span>Carrier:</span>
+                                <strong style="color: var(--accent-primary);">@Model.Carrier</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
     </div>
 </div>
 
-<style>
-    .fade-in-up {
-        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @@keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Carrier Auto-Detection based on Pakistan Prefixes
+            const mobileInput = document.getElementById('mobileInput');
+            const carrierSelect = document.getElementById('carrierSelect');
+
+            mobileInput.addEventListener('input', function(e) {
+                let val = this.value;
+                if(val.length >= 4) {
+                    let prefix = val.substring(0, 4);
+                    // Jazz/Mobilink/Warid
+                    if(["0300", "0301", "0302", "0303", "0304", "0305", "0306", "0307", "0308", "0309", "0320", "0321", "0322", "0323", "0324", "0325"].includes(prefix)) {
+                        carrierSelect.value = "Jazz";
+                    }
+                    // Zong
+                    else if(["0310", "0311", "0312", "0313", "0314", "0315", "0316", "0317", "0318"].includes(prefix)) {
+                        carrierSelect.value = "Zong";
+                    }
+                    // Ufone
+                    else if(["0330", "0331", "0332", "0333", "0334", "0335", "0336", "0337"].includes(prefix)) {
+                        carrierSelect.value = "Ufone";
+                    }
+                    // Telenor
+                    else if(["0340", "0341", "0342", "0343", "0344", "0345", "0346", "0347", "0348", "0349"].includes(prefix)) {
+                        carrierSelect.value = "Telenor";
+                    }
+                }
+            });
+
+            // 2. Fake Skeleton Loader Reveal (Enhances Perceived Performance)
+            const skeleton = document.getElementById('skeletonUI');
+            const result = document.getElementById('actualResult');
+
+            if(skeleton && result) {
+                // Simulate network/calculation delay for effect
+                setTimeout(() => {
+                    skeleton.style.display = 'none';
+                    result.style.display = 'block';
+                    result.classList.add('fade-in-up');
+                }, 800);
+            }
+
+            // 3. Copy to Clipboard functionality
+            const copyBtn = document.getElementById('copyBtn');
+            if(copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const balance = document.getElementById('finalBalanceText').innerText;
+                    navigator.clipboard.writeText(balance).then(() => {
+                        copyBtn.innerText = "✅";
+                        setTimeout(() => copyBtn.innerText = "📋", 2000);
+                    });
+                });
+            }
+
+            // 4. Form Submit Animation
+            const form = document.getElementById('calcForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+
+            form.addEventListener('submit', () => {
+                if($(form).valid()) {
+                    btnText.innerText = "Processing...";
+                    submitBtn.style.opacity = "0.7";
+                    // Haptic feedback for mobile
+                    if (navigator.vibrate) navigator.vibrate(50);
+                }
+            });
+        });
+    </script>
+}

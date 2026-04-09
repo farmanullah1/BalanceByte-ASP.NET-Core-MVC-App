@@ -1,72 +1,195 @@
 :root {
-    --primary-blue: #1D3557;
-    --secondary-red: #8B1C31;
-    --accent-gold: #F4A261;
-    --bg-cloud: #F8F9FA;
-    --surface-white: #FFFFFF;
+    /* Refined Light Theme */
+    --bg-base: #E2E8F0;
+    --surface-glass: rgba(255, 255, 255, 0.55);
+    --border-glass: rgba(255, 255, 255, 0.8);
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --accent-primary: #3B82F6; /* Vibrant Blue */
+    --accent-glow: #F43F5E; /* Rose Red */
+    --accent-success: #10B981; /* Mint Green */
+    /* Neumorphic Shadows (Light) */
+    --shadow-dark: #cbd5e1;
+    --shadow-light: #f8fafc;
+}
+
+[data-theme="dark"] {
+    /* Refined Dark Theme */
+    --bg-base: #0F172A;
+    --surface-glass: rgba(30, 41, 59, 0.6);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --accent-primary: #38BDF8; /* Sky Blue */
+    --accent-glow: #FB7185; /* Soft Pink/Red */
+    --accent-success: #34D399; /* Bright Mint */
+    /* Neumorphic Shadows (Dark) */
+    --shadow-dark: #020617;
+    --shadow-light: #1e293b;
 }
 
 body {
-    background-color: var(--bg-cloud);
-    color: var(--primary-blue);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Adding a subtle gradient blob behind the scenes to make the glass pop */
-    background-image: radial-gradient(circle at 15% 50%, rgba(29, 53, 87, 0.05), transparent 25%), radial-gradient(circle at 85% 30%, rgba(244, 162, 97, 0.08), transparent 25%);
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
-/* --- GLASSMORPHISM CARDS --- */
-.glass-panel {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(29, 53, 87, 0.05);
+/* --- BACKGROUND ANIMATIONS --- */
+.ambient-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    opacity: 0.6;
+    animation: drift 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blob-primary {
+    top: -10%;
+    left: -5%;
+    width: 50vw;
+    height: 50vw;
+    background: var(--accent-primary);
+    opacity: 0.15;
+}
+
+.blob-secondary {
+    bottom: -10%;
+    right: -5%;
+    width: 40vw;
+    height: 40vw;
+    background: var(--accent-glow);
+    opacity: 0.15;
+    animation-delay: -10s;
+}
+
+@keyframes drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(8vw, 8vh) scale(1.1);
+    }
+}
+
+/* --- HYBRID GLASSMORPHISM CARDS --- */
+.glass-card {
+    background: var(--surface-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-    .glass-panel:hover {
+    .glass-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 40px 0 rgba(29, 53, 87, 0.1);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
     }
 
-/* --- NEUMORPHISM BUTTONS & INPUTS --- */
+/* --- NEUMORPHIC INPUTS & BUTTONS --- */
 .neu-input {
-    background: var(--bg-cloud);
-    border: none;
-    border-radius: 12px;
-    padding: 15px;
-    color: var(--primary-blue);
-    /* Inset shadow for forms */
-    box-shadow: inset 5px 5px 10px #e1e2e3, inset -5px -5px 10px #ffffff;
-    transition: all 0.2s ease;
+    background: var(--bg-base);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 16px 20px;
+    color: var(--text-main);
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+    transition: all 0.3s ease;
     width: 100%;
 }
 
     .neu-input:focus {
         outline: none;
-        box-shadow: inset 8px 8px 16px #e1e2e3, inset -8px -8px 16px #ffffff;
+        border-color: var(--accent-primary);
+        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light), 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
 
 .neu-btn {
-    background: var(--bg-cloud);
-    color: var(--accent-gold);
-    font-weight: 600;
+    background: var(--bg-base);
+    color: var(--accent-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
     border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
+    border-radius: 16px;
+    padding: 16px 32px;
     cursor: pointer;
-    /* Outset shadow for buttons */
-    box-shadow: 6px 6px 12px #e1e2e3, -6px -6px 12px #ffffff;
-    transition: all 0.2s ease;
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
     .neu-btn:hover {
-        color: var(--secondary-red);
-        box-shadow: 8px 8px 16px #e1e2e3, -8px -8px 16px #ffffff;
+        color: #fff;
+        background: var(--accent-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
     }
 
     .neu-btn:active {
-        box-shadow: inset 5px 5px 10px #e1e2e3, inset -5px -5px 10px #ffffff;
+        transform: translateY(2px);
+        box-shadow: inset 4px 4px 10px rgba(0,0,0,0.2);
     }
+
+/* --- UTILITIES & ANIMATIONS --- */
+.text-gradient {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Skeleton Loader */
+.skeleton {
+    background: linear-gradient(90deg, var(--shadow-dark) 25%, var(--shadow-light) 50%, var(--shadow-dark) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+    height: 24px;
+    width: 100%;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Tax Breakdown Box */
+.tax-breakdown {
+    background: rgba(0,0,0,0.03);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+    border-left: 4px solid var(--accent-glow);
+}
+
+[data-theme="dark"] .tax-breakdown {
+    background: rgba(255,255,255,0.03);
+}

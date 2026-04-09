@@ -16,7 +16,6 @@ namespace BalanceByte.Controllers
         {
             if (ModelState.IsValid)
             {
-                // In a full app, you would save this to the Transaction History DB here
                 model.IsCalculated = true;
             }
             return View(model);
