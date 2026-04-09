@@ -1,0 +1,67 @@
+﻿@model BalanceByte.Models.RechargeModel
+
+@{
+    ViewData["Title"] = "Calculate Balance";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-sm-12">
+
+            <div class="glass-panel text-center mb-4">
+                <h2 style="color: var(--primary-blue); font-weight: 700;">BalanceByte</h2>
+                <p>Instantly calculate your actual SIM balance after taxes.</p>
+            </div>
+
+            <div class="glass-panel">
+                <form asp-action="Index" method="post">
+                    <div class="form-group mb-4">
+                        <label asp-for="Carrier" class="form-label font-weight-bold"></label>
+                        <select asp-for="Carrier" class="neu-input">
+                            <option value="">Select Carrier...</option>
+                            <option value="Jazz">Jazz</option>
+                            <option value="Zong">Zong</option>
+                            <option value="Telenor">Telenor</option>
+                            <option value="Ufone">Ufone</option>
+                        </select>
+                        <span asp-validation-for="Carrier" class="text-danger" style="color: var(--secondary-red) !important;"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="RechargeAmount" class="form-label font-weight-bold"></label>
+                        <input asp-for="RechargeAmount" class="neu-input" placeholder="e.g., 100" />
+                        <span asp-validation-for="RechargeAmount" class="text-danger" style="color: var(--secondary-red) !important;"></span>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="neu-btn w-100">Calculate Balance</button>
+                    </div>
+                </form>
+            </div>
+
+            @if (Model.IsCalculated)
+            {
+                <div class="glass-panel mt-4 text-center fade-in-up">
+                    <h4 style="color: var(--primary-blue);">Actual Balance</h4>
+                    <h1 style="color: var(--accent-gold); font-weight: 800; font-size: 3rem;">
+                        Rs. @Model.ActualBalance.ToString("0.00")
+                    </h1>
+                    <p style="color: var(--secondary-red); font-size: 0.9rem;">
+                        *Based on standard 13.5% tax deduction for @Model.Carrier.
+                    </p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .fade-in-up {
+        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>

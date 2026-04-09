@@ -1,0 +1,72 @@
+:root {
+    --primary-blue: #1D3557;
+    --secondary-red: #8B1C31;
+    --accent-gold: #F4A261;
+    --bg-cloud: #F8F9FA;
+    --surface-white: #FFFFFF;
+}
+
+body {
+    background-color: var(--bg-cloud);
+    color: var(--primary-blue);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Adding a subtle gradient blob behind the scenes to make the glass pop */
+    background-image: radial-gradient(circle at 15% 50%, rgba(29, 53, 87, 0.05), transparent 25%), radial-gradient(circle at 85% 30%, rgba(244, 162, 97, 0.08), transparent 25%);
+}
+
+/* --- GLASSMORPHISM CARDS --- */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(29, 53, 87, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .glass-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(29, 53, 87, 0.1);
+    }
+
+/* --- NEUMORPHISM BUTTONS & INPUTS --- */
+.neu-input {
+    background: var(--bg-cloud);
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    color: var(--primary-blue);
+    /* Inset shadow for forms */
+    box-shadow: inset 5px 5px 10px #e1e2e3, inset -5px -5px 10px #ffffff;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+    .neu-input:focus {
+        outline: none;
+        box-shadow: inset 8px 8px 16px #e1e2e3, inset -8px -8px 16px #ffffff;
+    }
+
+.neu-btn {
+    background: var(--bg-cloud);
+    color: var(--accent-gold);
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    /* Outset shadow for buttons */
+    box-shadow: 6px 6px 12px #e1e2e3, -6px -6px 12px #ffffff;
+    transition: all 0.2s ease;
+}
+
+    .neu-btn:hover {
+        color: var(--secondary-red);
+        box-shadow: 8px 8px 16px #e1e2e3, -8px -8px 16px #ffffff;
+    }
+
+    .neu-btn:active {
+        box-shadow: inset 5px 5px 10px #e1e2e3, inset -5px -5px 10px #ffffff;
+    }
